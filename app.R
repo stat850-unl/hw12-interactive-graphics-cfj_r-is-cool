@@ -9,46 +9,46 @@
 
 library(shiny)
 
-# Define UI for application that draws a histogram
-ui <- fluidPage(
-
-    # Application title
-    titlePanel("Old Faithful Geyser Data"),
-
-    # Sidebar with a slider input for number of bins 
-    sidebarLayout(
-        sidebarPanel(
-            sliderInput("bins",
-                        "Number of bins:",
-                        min = 1,
-                        max = 50,
-                        value = 30)
-        ),
-
-        # Show a plot of the generated distribution
-        mainPanel(
-           plotOutput("distPlot")
-        )
-    )
-)
-
-# Define server logic required to draw a histogram
-server <- function(input, output) {
-
-    output$distPlot <- renderPlot({
-        # generate bins based on input$bins from ui.R
-        x    <- faithful[, 2]
-        bins <- seq(min(x), max(x), length.out = input$bins + 1)
-
-        # draw the histogram with the specified number of bins
-        hist(x, breaks = bins, col = 'darkgray', border = 'white',
-             xlab = 'Waiting time to next eruption (in mins)',
-             main = 'Histogram of waiting times')
-    })
-}
-
-# Run the application 
-shinyApp(ui = ui, server = server)
+# # Define UI for application that draws a histogram
+# ui <- fluidPage(
+# 
+#     # Application title
+#     titlePanel("Old Faithful Geyser Data"),
+# 
+#     # Sidebar with a slider input for number of bins 
+#     sidebarLayout(
+#         sidebarPanel(
+#             sliderInput("bins",
+#                         "Number of bins:",
+#                         min = 1,
+#                         max = 50,
+#                         value = 30)
+#         ),
+# 
+#         # Show a plot of the generated distribution
+#         mainPanel(
+#            plotOutput("distPlot")
+#         )
+#     )
+# )
+# 
+# # Define server logic required to draw a histogram
+# server <- function(input, output) {
+# 
+#     output$distPlot <- renderPlot({
+#         # generate bins based on input$bins from ui.R
+#         x    <- faithful[, 2]
+#         bins <- seq(min(x), max(x), length.out = input$bins + 1)
+# 
+#         # draw the histogram with the specified number of bins
+#         hist(x, breaks = bins, col = 'darkgray', border = 'white',
+#              xlab = 'Waiting time to next eruption (in mins)',
+#              main = 'Histogram of waiting times')
+#     })
+# }
+# 
+# # Run the application 
+# shinyApp(ui = ui, server = server)
 
 
 install.packages("shinythemes")
@@ -68,16 +68,16 @@ library(tm)
 cocktails <- read.csv(text = getURL("https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2020/2020-05-26/cocktails.csv"))
 
 # Define UI for application that draws a histogram
-ui <- fluidPage( theme = shinytheme("superhero"),
-                 titlePanel("Cocktails"),
+ui <- fluidPage( theme = shinytheme("adventurous"),
+                 titlePanel("Going Wild on Cocktails"),
                  navbarPage(
                    ">>>>>",
                    tabPanel("Overall Exploration",
                             sidebarPanel(
                               "INPUT",
-                              radioButtons("butt","Most used ingredients in cocktail type:",
-                                           choices = c("Alcoholic cocktail","Other cocktails"),
-                                           select="Other cocktails"),
+                              radioButtons("button","Regular flavors in cocktails:",
+                                           choices = c("Regular cocktail","Custom cocktails"),
+                                           select="Custom cocktails"),
                             ),
                             mainPanel(
                               plotOutput("plot")
@@ -88,15 +88,15 @@ ui <- fluidPage( theme = shinytheme("superhero"),
                             sidebarPanel(
                               selectInput("name","Drink name",
                                           choices=unique(cocktails$drink),
-                                          selected = "747"),
+                                          selected = "ABC"),
                               selectInput("req","Requirements",choices=c("Status","Ingredients","None"),
                                           selected = "None"),
                               conditionalPanel('input.req=="Status"',
                                                checkboxGroupInput("chrac","Characteristics of the cocktail",
-                                                                  choices = names(cocktails)[c(5,6,8)],
-                                                                  selected=names(cocktails)[5])),
+                                                                  choices = names(cocktails)[c(2,5,6,8)],
+                                                                  selected=names(cocktails)[8])),
                               conditionalPanel('input.req =="Ingredients"',
-                                               selectInput("op","Need measure of the ingredients",choices=c("Yes","No"),
+                                               selectInput("op"," measure of the ingredients",choices=c("Yes","No"),
                                                            selected = "No")
                               )               
                               
@@ -105,21 +105,21 @@ ui <- fluidPage( theme = shinytheme("superhero"),
                               dataTableOutput("t1")
                             )
                    ),
-                   tabPanel("My_Drink",
+                   tabPanel("Order_placed",
                             sidebarPanel(
                               selectInput("name2","Drink name",
                                           choices=unique(cocktails$drink),
-                                          selected = "747"),
+                                          selected = "ABC"),
                               radioButtons("pic","Picture of the cocktail",choices = c("Yes","No"),
                                            selected = "No"),
                               conditionalPanel(condition='input.pic=="Yes"',
-                                               p("Enjoy the music", strong("and your drink"))),
+                                               p("Have a fun night", strong("and enjoy your drink"))),
                             ),
                             mainPanel(
                               conditionalPanel(condition='input.pic=="Yes"',htmlOutput("picture")),
                               
                               conditionalPanel(condition='input.pic=="No"',
-                                               p("Enjoy the music", strong("BarTender is preparing your drink")))
+                                               p("Have a fun night", strong("Your order will be ready soon")))
                             )
                    )
                    
@@ -127,12 +127,12 @@ ui <- fluidPage( theme = shinytheme("superhero"),
                  
 )
 
-
+# Histogram
 server <- function(input, output) {
   output$plot<-renderPlot({
-    if(input$butt=="Alcoholic cocktail"){
+    if(input$butt=="Custom cocktail"){
       data<-cocktails %>%
-        filter(alcoholic=="Alcoholic") %>%
+        filter(alcoholic=="Custom") %>%
         select(ingredient)
       text <- data$ingredient
       docs <- Corpus(VectorSource(text))
@@ -141,12 +141,12 @@ server <- function(input, output) {
       words <- sort(rowSums(matrix),decreasing=TRUE)
       df <- data.frame(word = names(words),freq=words)
       
-      set.seed(1234) # for reproducibility
+      set.seed(1234) 
       wordcloud(words = df$word, freq = df$freq, min.freq = 1,max.words=200,random.order=FALSE,rot.per=0.35,
-                colors=brewer.pal(8, "Dark2"))
+                colors=brewer.pal(8, "Egg Cream"))
     } else {
       data<-cocktails %>%
-        filter(alcoholic!="Alcoholic") %>%
+        filter(alcoholic!="Custom") %>%
         select(ingredient)
       text <- data$ingredient
       docs <- Corpus(VectorSource(text))
@@ -155,9 +155,9 @@ server <- function(input, output) {
       words <- sort(rowSums(matrix),decreasing=TRUE)
       df <- data.frame(word = names(words),freq=words)
       
-      set.seed(1234) # for reproducibility
+      set.seed(1234) 
       wordcloud(words = df$word, freq = df$freq, min.freq = 1,max.words=200,random.order=FALSE,rot.per=0.35,
-                colors=brewer.pal(8, "Dark2"))
+                colors=brewer.pal(8, "Egg Cream"))
       
     }
   })
@@ -167,7 +167,7 @@ server <- function(input, output) {
       select(drink_thumb) %>%
       unique()
     src = im$drink_thumb
-    c('<img src="',src,'" >')})
+    c('<img src="',src,'">')})
   
   output$t1<-renderDataTable({
     if (input$req=="Ingredients" & input$op=="No"){
@@ -179,10 +179,10 @@ server <- function(input, output) {
       cocktails %>%
         filter(drink==input$name) %>%
         select(ingredient,measure)
-    } else if(input$req=="Status" & length(input$chrac)==1 & input$chrac[1]=='alcoholic'){
+    } else if(input$req=="Status" & length(input$chrac)==1 & input$chrac[1]=='Custom'){
       cocktails %>%
         filter(drink==input$name) %>%
-        select(alcoholic) %>%
+        select(Custom) %>%
         unique()
     } else if(input$req=="Status" & length(input$chrac)==1 & input$chrac[1]=='category'){
       cocktails %>%
@@ -195,10 +195,10 @@ server <- function(input, output) {
         filter(drink==input$name) %>%
         select(glass) %>%
         unique()
-    } else if(input$req=="Status" & length(input$chrac)==2 & input$chrac[1]=="alcoholic" & input$chrac[2]=="category"){
+    } else if(input$req=="Status" & length(input$chrac)==2 & input$chrac[1]=="Custom" & input$chrac[2]=="category"){
       cocktails %>%
         filter(drink==input$name) %>%
-        select(alcoholic,category) %>%
+        select(Custom,category) %>%
         unique()
     } else if(input$req=="Status" & length(input$chrac)==2 & input$chrac[1]=="category" &
               input$chrac[2]=="glass"){
@@ -206,17 +206,17 @@ server <- function(input, output) {
         filter(drink==input$name) %>%
         select(category,glass) %>%
         unique()
-    } else if(input$req=="Status" & length(input$chrac)==2 & input$chrac[1]=="alcoholic" &
+    } else if(input$req=="Status" & length(input$chrac)==2 & input$chrac[1]=="Custom" &
               input$chrac[2]=="glass"){
       cocktails %>%
         filter(drink==input$name) %>%
-        select(alcoholic,glass) %>%
+        select(Custom,glass) %>%
         unique()
-    } else if(input$req=="Status" & length(input$chrac)==3 & input$chrac[1]=="alcoholic" & input$chrac[2]=="category" &
+    } else if(input$req=="Status" & length(input$chrac)==3 & input$chrac[1]=="Custom" & input$chrac[2]=="category" &
               input$chrac[3]=="glass"){
       cocktails %>%
         filter(drink==input$name) %>%
-        select(alcoholic,category,glass) %>%
+        select(Custom,category,glass) %>%
         unique()
     }
   }) 
@@ -225,4 +225,5 @@ server <- function(input, output) {
 
 # Run the application
 shinyApp(ui = ui, server = server)
+
 
