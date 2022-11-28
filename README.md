@@ -15,3 +15,8 @@ You can find the instructions for deploying your application [here](https://docs
 
 When you've deployed your application, edit this README to contain a link to your applet.
 
+Here is the link to my applet:
+https://jmensah50.shinyapps.io/hw12-interactive-graphics-cfj_r-is-cool/
+
+The applet is an  interactive database to choose your own ingredients, the glass type and the measurement of the ingredient that you want.These options are tied to each other in a such a way that the choice of glass is dependent on the ingredient chosen, and the measurement also depends on the previous selection on ingredient and glass. One cool thing is, you're able also able view the image of the cocktail that you have made by clicking on the 
+link below the drink_thumb column.
